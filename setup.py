@@ -10,8 +10,9 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
     The skeleton includes a 'src' directory with an '__init__.py' file, containing two subdirectories,
     'Front' and 'Back'. Each of 'Front' and 'Back' contains an '__init__.py' file and subdirectories
     'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
-    an '__init__.py' file and a specific Python file: 'logging.py', 'exceptions.py', 'constants.py', 
-    or 'utils.py'. The 'components' directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
+    an '__init__.py' file and a specific Python file: 'logging.py' with logging utilities,
+    'exceptions.py' with custom exception classes, 'constants.py', or 'utils.py'. The 'components'
+    directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
 
     Functionality:
         - Clears the [project.dependencies] section in pyproject.toml.
@@ -19,6 +20,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         - Uses a regular expression to extract package names and version constraints.
         - Executes `uv add` for each valid package to update pyproject.toml and install it.
         - Creates the source package structure under 'src/Front' and 'src/Back' with specified subdirectories and files.
+        - Includes template code for 'logging.py' and 'exceptions.py' with custom exception classes and logging utilities.
         - Handles errors such as missing files, invalid package specifications, or failed commands.
         - Provides feedback on the success or failure of each operation.
 
@@ -79,6 +81,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         - If pyproject.toml does not exist, it creates a minimal one with a [project] section.
         - The source package skeleton is created in the current working directory under 'src'.
         - Existing directories or files are not overwritten to avoid data loss.
+        - Template code is included in 'logging.py' for logging utilities and 'exceptions.py' for custom exceptions.
     """
     # Block 1: Clear existing dependencies in pyproject.toml
     # Purpose: Loads pyproject.toml and clears the [project.dependencies] section.
@@ -157,9 +160,9 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         # Purpose: Creates the 'src' directory with an '__init__.py' file, containing 'Front' and 'Back' 
         #          subdirectories. Each of 'Front' and 'Back' has an '__init__.py' file and subdirectories 
         #          'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
-        #          an '__init__.py' file and a specific Python file: 'logging.py', 'exceptions.py', 
-        #          'constants.py', or 'utils.py'. The 'components' directory includes 'StageOne.py', 
-        #          'StageTwo.py', and 'StageThree.py'.
+        #          an '__init__.py' file and a specific Python file: 'logging.py' with logging utilities, 
+        #          'exceptions.py' with custom exception classes, 'constants.py', or 'utils.py'. The 'components' 
+        #          directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
         # Input: None (uses current working directory).
         # Output: Creates the directory structure and files, prints status, and returns True/False.
         try:
@@ -186,6 +189,212 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
                 ("Utils", ["utils.py"])
             ]
 
+            # Template for logging.py
+            logging_template_front = """import logging
+
+def setup_logger(name, log_file='frontend.log', level=logging.INFO):
+    \"\"\"Configure and return a logger for frontend components.
+    
+    Args:
+        name (str): Name of the logger.
+        log_file (str): Path to the log file. Defaults to 'frontend.log'.
+        level: Logging level (e.g., logging.INFO, logging.ERROR).
+    
+    Returns:
+        logging.Logger: Configured logger instance.
+    \"\"\"
+    logger = logging.getLogger(name)
+    if not logger.handlers:  # Avoid duplicate handlers
+        logger.setLevel(level)
+        handler = logging.FileHandler(log_file)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+def log_exception(logger, exception, message):
+    \"\"\"Log an exception with additional context.
+    
+    Args:
+        logger (logging.Logger): Logger instance to use.
+        exception (Exception): The exception to log.
+        message (str): Additional message to include in the log.
+    \"\"\"
+    logger.error(f\"{message}: {str(exception)}\", exc_info=True)
+"""
+
+            logging_template_back = """import logging
+
+def setup_logger(name, log_file='backend.log', level=logging.INFO):
+    \"\"\"Configure and return a logger for backend components.
+    
+    Args:
+        name (str): Name of the logger.
+        log_file (str): Path to the log file. Defaults to 'backend.log'.
+        level: Logging level (e.g., logging.INFO, logging.ERROR).
+    
+    Returns:
+        logging.Logger: Configured logger instance.
+    \"\"\"
+    logger = logging.getLogger(name)
+    if not logger.handlers:  # Avoid duplicate handlers
+        logger.setLevel(level)
+        handler = logging.FileHandler(log_file)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+def log_exception(logger, exception, message):
+    \"\"\"Log an exception with additional context.
+    
+    Args:
+        logger (logging.Logger): Logger instance to use.
+        exception (Exception): The exception to log.
+        message (str): Additional message to include in the log.
+    \"\"\"
+    logger.error(f\"{message}: {str(exception)}\", exc_info=True)
+"""
+
+            # Template for exceptions.py
+            exceptions_template_front = """from datetime import datetime
+
+class FrontendError(Exception):
+    \"\"\"Base exception for frontend-related errors.\"\"\"
+    pass
+
+class FrontendValidationError(FrontendError):
+    \"\"\"Raised when user input validation fails in the frontend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        input_data: The invalid input that caused the error.
+        timestamp (datetime): Time the error occurred.
+    \"\"\"
+    def __init__(self, message, input_data=None):
+        self.message = message
+        self.input_data = input_data
+        self.timestamp = datetime.now()
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"[{self.timestamp}] {self.message} (Input: {self.input_data if self.input_data else 'None'})\"
+
+class FrontendRenderingError(FrontendError):
+    \"\"\"Raised when rendering fails in the frontend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        component (str): The component that failed to render.
+    \"\"\"
+    def __init__(self, message, component=None):
+        self.message = message
+        self.component = component
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (Component: {self.component if self.component else 'None'})\"
+
+class FrontendConnectionError(FrontendError):
+    \"\"\"Raised when a connection to an external service fails in the frontend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        service (str): The external service that failed.
+    \"\"\"
+    def __init__(self, message, service=None):
+        self.message = message
+        self.service = service
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (Service: {self.service if self.service else 'None'})\"
+
+class FrontendConfigurationError(FrontendError):
+    \"\"\"Raised when configuration settings are invalid in the frontend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        config_key (str): The invalid configuration key.
+    \"\"\"
+    def __init__(self, message, config_key=None):
+        self.message = message
+        self.config_key = config_key
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (Config Key: {self.config_key if self.config_key else 'None'})\"
+"""
+
+            exceptions_template_back = """from datetime import datetime
+
+class BackendError(Exception):
+    \"\"\"Base exception for backend-related errors.\"\"\"
+    pass
+
+class BackendDatabaseError(BackendError):
+    \"\"\"Raised when a database operation fails in the backend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        query (str): The database query that failed.
+        timestamp (datetime): Time the error occurred.
+    \"\"\"
+    def __init__(self, message, query=None):
+        self.message = message
+        self.query = query
+        self.timestamp = datetime.now()
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"[{self.timestamp}] {self.message} (Query: {self.query if self.query else 'None'})\"
+
+class BackendAPIError(BackendError):
+    \"\"\"Raised when an API call fails in the backend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        status_code (int): HTTP status code of the failed API call.
+    \"\"\"
+    def __init__(self, message, status_code=None):
+        self.message = message
+        self.status_code = status_code
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (Status Code: {self.status_code if self.status_code else 'None'})\"
+
+class BackendAuthenticationError(BackendError):
+    \"\"\"Raised when authentication fails in the backend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        user_id: The user ID associated with the failure.
+    \"\"\"
+    def __init__(self, message, user_id=None):
+        self.message = message
+        self.user_id = user_id
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (User ID: {self.user_id if self.user_id else 'None'})\"
+
+class BackendConfigurationError(BackendError):
+    \"\"\"Raised when configuration settings are invalid in the backend.
+    
+    Attributes:
+        message (str): Explanation of the error.
+        config_key (str): The invalid configuration key.
+    \"\"\"
+    def __init__(self, message, config_key=None):
+        self.message = message
+        self.config_key = config_key
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f\"{self.message} (Config Key: {self.config_key if self.config_key else 'None'})\"
+"""
+
             # Create Front and Back directories with their subdirectories and files
             for main_subdir in main_subdirs:
                 main_subdir_path = os.path.join(src_dir, main_subdir)
@@ -209,7 +418,13 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
                         file_path = os.path.join(subdir_path, extra_file)
                         if not os.path.exists(file_path):
                             with open(file_path, 'w') as f:
-                                f.write("")  # Create empty Python file
+                                # Write template code for logging.py and exceptions.py
+                                if extra_file == "logging.py":
+                                    f.write(logging_template_front if main_subdir == "Front" else logging_template_back)
+                                elif extra_file == "exceptions.py":
+                                    f.write(exceptions_template_front if main_subdir == "Front" else exceptions_template_back)
+                                else:
+                                    f.write("")  # Create empty Python file for others
                     print(f"Successfully created src/{main_subdir}/{subdir} with __init__.py and {', '.join(extra_files)}")
 
             return True
