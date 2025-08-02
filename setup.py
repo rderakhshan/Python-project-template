@@ -7,7 +7,8 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
     """
     Clears all dependencies from pyproject.toml, adds packages from a requirements.txt file
     using the `uv add` command, and creates a source package skeleton in the project directory.
-    The skeleton includes a 'src' directory with an '__init__.py' file and subdirectories 
+    The skeleton includes a 'src' directory with an '__init__.py' file, containing two subdirectories,
+    'Front' and 'Back'. Each of 'Front' and 'Back' contains an '__init__.py' file and subdirectories
     'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
     an '__init__.py' file and a specific Python file: 'logging.py', 'exceptions.py', 'constants.py', 
     or 'utils.py'. The 'components' directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
@@ -17,7 +18,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         - Parses package specifications from requirements.txt, ignoring comments and empty lines.
         - Uses a regular expression to extract package names and version constraints.
         - Executes `uv add` for each valid package to update pyproject.toml and install it.
-        - Creates the source package structure under 'src' with specified subdirectories and files.
+        - Creates the source package structure under 'src/Front' and 'src/Back' with specified subdirectories and files.
         - Handles errors such as missing files, invalid package specifications, or failed commands.
         - Provides feedback on the success or failure of each operation.
 
@@ -28,7 +29,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         4. Skip invalid lines or comments.
         5. Run `uv add` for each valid package to update pyproject.toml and install it.
         6. Save the updated pyproject.toml.
-        7. Create the 'src' directory with '__init__.py' and subdirectories with their files.
+        7. Create the 'src' directory with '__init__.py', and 'Front' and 'Back' subdirectories with their files.
         8. Return True if all operations succeed, False if any step fails.
 
     Args:
@@ -56,11 +57,18 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         All packages added successfully.
         Creating source package skeleton...
         Successfully created src with __init__.py
-        Successfully created src/components with StageOne.py, StageTwo.py, StageThree.py, and __init__.py
-        Successfully created src/Logging with __init__.py and logging.py
-        Successfully created src/Exceptions with __init__.py and exceptions.py
-        Successfully created src/Constants with __init__.py and constants.py
-        Successfully created src/Utils with __init__.py and utils.py
+        Successfully created src/Front with __init__.py
+        Successfully created src/Front/components with StageOne.py, StageTwo.py, StageThree.py, and __init__.py
+        Successfully created src/Front/Logging with __init__.py and logging.py
+        Successfully created src/Front/Exceptions with __init__.py and exceptions.py
+        Successfully created src/Front/Constants with __init__.py and constants.py
+        Successfully created src/Front/Utils with __init__.py and utils.py
+        Successfully created src/Back with __init__.py
+        Successfully created src/Back/components with StageOne.py, StageTwo.py, StageThree.py, and __init__.py
+        Successfully created src/Back/Logging with __init__.py and logging.py
+        Successfully created src/Back/Exceptions with __init__.py and exceptions.py
+        Successfully created src/Back/Constants with __init__.py and constants.py
+        Successfully created src/Back/Utils with __init__.py and utils.py
         True
 
     Notes:
@@ -146,11 +154,12 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         print("All packages added successfully.")  # Indicate completion of all additions
 
         # Block 5: Create source package skeleton
-        # Purpose: Creates the 'src' directory with an '__init__.py' file and subdirectories 
-        #          'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory 
-        #          contains an '__init__.py' file and a specific Python file: 'logging.py', 
-        #          'exceptions.py', 'constants.py', or 'utils.py'. The 'components' directory 
-        #          includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
+        # Purpose: Creates the 'src' directory with an '__init__.py' file, containing 'Front' and 'Back' 
+        #          subdirectories. Each of 'Front' and 'Back' has an '__init__.py' file and subdirectories 
+        #          'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
+        #          an '__init__.py' file and a specific Python file: 'logging.py', 'exceptions.py', 
+        #          'constants.py', or 'utils.py'. The 'components' directory includes 'StageOne.py', 
+        #          'StageTwo.py', and 'StageThree.py'.
         # Input: None (uses current working directory).
         # Output: Creates the directory structure and files, prints status, and returns True/False.
         try:
@@ -165,6 +174,9 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
                     f.write("")  # Create empty __init__.py in src
             print("Successfully created src with __init__.py")
 
+            # Define main subdirectories (Front and Back)
+            main_subdirs = ["Front", "Back"]
+
             # Define subdirectories and their specific Python files
             subdirs = [
                 ("components", ["StageOne.py", "StageTwo.py", "StageThree.py"]),
@@ -174,21 +186,31 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
                 ("Utils", ["utils.py"])
             ]
 
-            # Create each subdirectory and its files
-            for subdir, extra_files in subdirs:
-                subdir_path = os.path.join(src_dir, subdir)
-                os.makedirs(subdir_path, exist_ok=True)  # Create subdirectory if it doesn't exist
-                init_file = os.path.join(subdir_path, "__init__.py")
-                if not os.path.exists(init_file):
-                    with open(init_file, 'w') as f:
-                        f.write("")  # Create empty __init__.py
-                # Create extra Python files for the subdirectory
-                for extra_file in extra_files:
-                    file_path = os.path.join(subdir_path, extra_file)
-                    if not os.path.exists(file_path):
-                        with open(file_path, 'w') as f:
-                            f.write("")  # Create empty Python file
-                print(f"Successfully created src/{subdir} with __init__.py and {', '.join(extra_files)}")
+            # Create Front and Back directories with their subdirectories and files
+            for main_subdir in main_subdirs:
+                main_subdir_path = os.path.join(src_dir, main_subdir)
+                os.makedirs(main_subdir_path, exist_ok=True)  # Create Front or Back directory
+                main_init_file = os.path.join(main_subdir_path, "__init__.py")
+                if not os.path.exists(main_init_file):
+                    with open(main_init_file, 'w') as f:
+                        f.write("")  # Create empty __init__.py in Front or Back
+                print(f"Successfully created src/{main_subdir} with __init__.py")
+
+                # Create subdirectories and files within Front or Back
+                for subdir, extra_files in subdirs:
+                    subdir_path = os.path.join(main_subdir_path, subdir)
+                    os.makedirs(subdir_path, exist_ok=True)  # Create subdirectory if it doesn't exist
+                    init_file = os.path.join(subdir_path, "__init__.py")
+                    if not os.path.exists(init_file):
+                        with open(init_file, 'w') as f:
+                            f.write("")  # Create empty __init__.py
+                    # Create extra Python files for the subdirectory
+                    for extra_file in extra_files:
+                        file_path = os.path.join(subdir_path, extra_file)
+                        if not os.path.exists(file_path):
+                            with open(file_path, 'w') as f:
+                                f.write("")  # Create empty Python file
+                    print(f"Successfully created src/{main_subdir}/{subdir} with __init__.py and {', '.join(extra_files)}")
 
             return True
 
