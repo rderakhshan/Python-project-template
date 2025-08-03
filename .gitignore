@@ -1,10 +1,151 @@
-# Python-generated files
+# Python compiled files
+*.pyc
+*.pyo
+*.pyd
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.py[cod]
+*$py.class
 
 # Virtual environments
-.venv
+.venv/
+venv/
+env/
+ENV/
+.venv*/
+venv*/
+env*/
+ENV*/
+
+# Dependency directories
+site-packages/
+dist/
+build/
+*.egg-info/
+*.egg
+eggs/
+.eggs/
+*.whl
+
+# Log files
+*.log
+logs/
+frontend.log
+backend.log
+logs/dev.log
+logs/prod.log
+
+# Configuration files with sensitive data
+# Uncomment the following line if you want to track configuration.yml
+# configs/configuration.yml
+configs/*.yml
+configs/*.yaml
+.env
+*.env
+secrets/
+*.secret
+*.key
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+htmlcov/
+tox/
+nox/
+.coverage.*
+.cache
+
+# Package and distribution
+dist/
+build/
+*.egg-info/
+*.egg
+*.tar.gz
+*.zip
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Miscellaneous
+*.swp
+*~
+*.bak
+*.tmp
+*.temp
+*.cache
+*.pid
+*.seed
+*.pid.lock
+
+# Project-specific temporary directories
+tmp/
+temp/
+cache/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dll
+*.dylib
+
+# C extensions
+*.c
+*.h
+*.o
+*.obj
+
+# Documentation build artifacts
+docs/_build/
+docs/build/
+docs/_static/
+docs/_templates/
+
+# macOS-specific
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Other common ignores
+*.bak
+*.swp
+*.swo
+*.swn
+*.swm
+*.swo
+*.swl
+*.swk
+*.swj
+*.swi
+*.swh
+*.swg
+*.swf
+*.swe
+*.swd
+*.swc
+*.swb
+*.swa
