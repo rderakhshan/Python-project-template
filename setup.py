@@ -8,11 +8,12 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
     Clears all dependencies from pyproject.toml, adds packages from a requirements.txt file
     using the `uv add` command, and creates a source package skeleton in the project directory.
     The skeleton includes a 'src' directory with an '__init__.py' file, containing two subdirectories,
-    'Front' and 'Back'. Each of 'Front' and 'Back' contains an '__init__.py' file and subdirectories
-    'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
-    an '__init__.py' file and a specific Python file: 'logging.py' with logging utilities,
-    'exceptions.py' with custom exception classes, 'constants.py', or 'utils.py'. The 'components'
-    directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
+    'Front' and 'Back', each with an '__init__.py' file and subdirectories 'components', 'Logging',
+    'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains an '__init__.py' file and a
+    specific Python file: 'logging.py' with logging utilities, 'exceptions.py' with custom exception
+    classes, 'constants.py', or 'utils.py'. The 'components' directory includes 'StageOne.py',
+    'StageTwo.py', and 'StageThree.py'. Additionally, a 'configs' directory is created in the project
+    root with a 'configuration.yml' file containing industry-standard configuration settings.
 
     Functionality:
         - Clears the [project.dependencies] section in pyproject.toml.
@@ -20,7 +21,8 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         - Uses a regular expression to extract package names and version constraints.
         - Executes `uv add` for each valid package to update pyproject.toml and install it.
         - Creates the source package structure under 'src/Front' and 'src/Back' with specified subdirectories and files.
-        - Includes template code for 'logging.py' and 'exceptions.py' with custom exception classes and logging utilities.
+        - Creates the 'configs' directory with a 'configuration.yml' file in the project root.
+        - Includes template code for 'logging.py', 'exceptions.py', and 'configuration.yml'.
         - Handles errors such as missing files, invalid package specifications, or failed commands.
         - Provides feedback on the success or failure of each operation.
 
@@ -31,7 +33,8 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         4. Skip invalid lines or comments.
         5. Run `uv add` for each valid package to update pyproject.toml and install it.
         6. Save the updated pyproject.toml.
-        7. Create the 'src' directory with '__init__.py', and 'Front' and 'Back' subdirectories with their files.
+        7. Create the 'configs' directory with 'configuration.yml' and the 'src' directory with
+           '__init__.py', and 'Front' and 'Back' subdirectories with their files.
         8. Return True if all operations succeed, False if any step fails.
 
     Args:
@@ -39,9 +42,9 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
                                 in the current directory.
 
     Returns:
-        bool: True if dependencies were cleared, all packages were added successfully, and the 
-              source package skeleton was created, False if any error occurs (e.g., file not found, 
-              invalid package, or failed command).
+        bool: True if dependencies were cleared, all packages were added successfully, and the
+              package skeleton and configuration file were created, False if any error occurs
+              (e.g., file not found, invalid package, or failed command).
 
     Raises:
         FileNotFoundError: If requirements.txt or pyproject.toml does not exist.
@@ -58,6 +61,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         Successfully added pandas: ...
         All packages added successfully.
         Creating source package skeleton...
+        Successfully created configs with configuration.yml
         Successfully created src with __init__.py
         Successfully created src/Front with __init__.py
         Successfully created src/Front/components with StageOne.py, StageTwo.py, StageThree.py, and __init__.py
@@ -80,8 +84,10 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         - After running, use `uv sync` to ensure the environment matches pyproject.toml.
         - If pyproject.toml does not exist, it creates a minimal one with a [project] section.
         - The source package skeleton is created in the current working directory under 'src'.
+        - The 'configs' directory is created in the project root with a 'configuration.yml' file.
         - Existing directories or files are not overwritten to avoid data loss.
-        - Template code is included in 'logging.py' for logging utilities and 'exceptions.py' for custom exceptions.
+        - Template code is included in 'logging.py' for logging utilities, 'exceptions.py' for custom
+          exceptions, and 'configuration.yml' for project configuration.
     """
     # Block 1: Clear existing dependencies in pyproject.toml
     # Purpose: Loads pyproject.toml and clears the [project.dependencies] section.
@@ -120,7 +126,7 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
         package_pattern = re.compile(r'^([a-zA-Z0-9][a-zA-Z0-9._-]*)([=><!~]+.*)?$')  # Matches package name and optional version constraint
 
         # Block 4: Process each line and execute `uv add`
-        # Purpose: Iterates through each line, parses valid package specifications, and runs `uv add`.
+        # Purpose: Iterates through each line, parses valid package specifications, and runs `uv add'.
         # Input: List of lines from requirements.txt.
         # Output: Executes `uv add` for each valid package, prints status, and returns True/False based on success.
         for line in lines:
@@ -156,17 +162,74 @@ def add_requirements_to_pyproject(requirements_file="requirements.txt"):
 
         print("All packages added successfully.")  # Indicate completion of all additions
 
-        # Block 5: Create source package skeleton
-        # Purpose: Creates the 'src' directory with an '__init__.py' file, containing 'Front' and 'Back' 
-        #          subdirectories. Each of 'Front' and 'Back' has an '__init__.py' file and subdirectories 
-        #          'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains 
-        #          an '__init__.py' file and a specific Python file: 'logging.py' with logging utilities, 
-        #          'exceptions.py' with custom exception classes, 'constants.py', or 'utils.py'. The 'components' 
+        # Block 5: Create source package skeleton and configuration directory
+        # Purpose: Creates the 'configs' directory with a 'configuration.yml' file in the project root.
+        #          Creates the 'src' directory with an '__init__.py' file, containing 'Front' and 'Back'
+        #          subdirectories. Each of 'Front' and 'Back' has an '__init__.py' file and subdirectories
+        #          'components', 'Logging', 'Exceptions', 'Constants', and 'Utils'. Each subdirectory contains
+        #          an '__init__.py' file and a specific Python file: 'logging.py' with logging utilities,
+        #          'exceptions.py' with custom exception classes, 'constants.py', or 'utils.py'. The 'components'
         #          directory includes 'StageOne.py', 'StageTwo.py', and 'StageThree.py'.
         # Input: None (uses current working directory).
         # Output: Creates the directory structure and files, prints status, and returns True/False.
         try:
             print("Creating source package skeleton...")
+
+            # Create configs directory with configuration.yml
+            configs_dir = os.path.join(os.getcwd(), "configs")
+            os.makedirs(configs_dir, exist_ok=True)  # Create configs directory if it doesn't exist
+            config_file = os.path.join(configs_dir, "configuration.yml")
+            if not os.path.exists(config_file):
+                config_template = """# Configuration file for the project
+# Supports multiple environments (dev, prod) and settings for frontend, backend, database, logging, and API
+
+environments:
+  dev:
+    debug: true
+    logging:
+      level: DEBUG
+      file: logs/dev.log
+    frontend:
+      api_endpoint: http://localhost:3000/api
+      timeout: 10
+      max_retries: 3
+    backend:
+      database:
+        host: localhost
+        port: 5432
+        name: dev_db
+        user: dev_user
+        password: dev_password
+      api:
+        base_url: http://localhost:8000
+        key: dev_api_key
+        timeout: 30
+  prod:
+    debug: false
+    logging:
+      level: INFO
+      file: logs/prod.log
+    frontend:
+      api_endpoint: https://api.production.com
+      timeout: 15
+      max_retries: 5
+    backend:
+      database:
+        host: prod.db.server.com
+        port: 5432
+        name: prod_db
+        user: prod_user
+        password: prod_password
+      api:
+        base_url: https://api.production.com
+        key: prod_api_key
+        timeout: 60
+"""
+                with open(config_file, 'w') as f:
+                    f.write(config_template)  # Write configuration.yml
+                print("Successfully created configs with configuration.yml")
+
+            # Create src directory
             src_dir = os.path.join(os.getcwd(), "src")  # Path to src directory
             os.makedirs(src_dir, exist_ok=True)  # Create src directory if it doesn't exist
             

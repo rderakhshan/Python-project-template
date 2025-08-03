@@ -1,0 +1,44 @@
+# Configuration file for the project
+# Supports multiple environments (dev, prod) and settings for frontend, backend, database, logging, and API
+
+environments:
+  dev:
+    debug: true
+    logging:
+      level: DEBUG
+      file: logs/dev.log
+    frontend:
+      api_endpoint: http://localhost:3000/api
+      timeout: 10
+      max_retries: 3
+    backend:
+      database:
+        host: localhost
+        port: 5432
+        name: dev_db
+        user: dev_user
+        password: dev_password
+      api:
+        base_url: http://localhost:8000
+        key: dev_api_key
+        timeout: 30
+  prod:
+    debug: false
+    logging:
+      level: INFO
+      file: logs/prod.log
+    frontend:
+      api_endpoint: https://api.production.com
+      timeout: 15
+      max_retries: 5
+    backend:
+      database:
+        host: prod.db.server.com
+        port: 5432
+        name: prod_db
+        user: prod_user
+        password: prod_password
+      api:
+        base_url: https://api.production.com
+        key: prod_api_key
+        timeout: 60

@@ -1,5 +1,0 @@
-2025-08-02 23:37:28,076 - frontend - ERROR - Frontend rendering issue: Failed to render component (Component: MainView)
-Traceback (most recent call last):
-  File "/Users/vahid/Documents/AI-Apps/Test/main.py", line 22, in <module>
-    raise FrontendRenderingError("Failed to render component", component=component)
-src.Front.Exceptions.exceptions.FrontendRenderingError: Failed to render component (Component: MainView)

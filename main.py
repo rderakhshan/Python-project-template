@@ -4,9 +4,6 @@ from src.Front.Exceptions.exceptions import FrontendValidationError, FrontendRen
 from src.Back.Logging.logging import setup_logger as setup_backend_logger, log_exception as log_backend_exception
 
 
-
-
-
 # Frontend example
 frontend_logger = setup_logger("frontend", log_file="frontend.log")
 try:
